@@ -24,3 +24,21 @@ exports.getAllProduct = async(req,res) => {
 
     return res.status(201).json(products)
 }
+
+// update product
+exports.updateProduct = async(req,res) => {
+    let product;
+
+    try {
+        product = await Product.findByIdAndUpdate(req.params.id,req.body)
+    } catch (error) {
+        console.log(error);
+    }
+
+    if(!product){
+        return res.status(500).json({message:"product not find"})
+    }
+
+    return res.status(200).json({message:"product update successfully",product})
+}
+
