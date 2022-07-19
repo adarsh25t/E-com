@@ -1,4 +1,6 @@
-const Product = require('../model/productModel')
+const Product = require('../model/productModel');
+const ApiFeatures = require('../utils/apiFeatures');
+const ErrorHandler = require('../utils/errorHandler');
 
 // create product
 exports.createProduct = async(req,res) => {
@@ -17,7 +19,8 @@ exports.createProduct = async(req,res) => {
 exports.getAllProduct = async(req,res) => {
     let products;
     try {
-        products = await Product.find()
+        const apiFeatures = new ApiFeatures(Product.find(),req.query).search()
+        products = await apiFeatures.query
     } catch (error) {
         console.log(error);
     }
@@ -43,7 +46,7 @@ exports.updateProduct = async(req,res) => {
 }
 
 // delete Product
-exports.deleteProduct = async(req,res) => {
+exports.deleteProduct = async(req,res,next) => {
     let product;
 
     try {
@@ -60,7 +63,7 @@ exports.deleteProduct = async(req,res) => {
 }
 
 // product details
-exports.detailsProduct = async(req,res) => {
+exports.detailsProduct = async(req,res,next) => {
     let product;
 
     try {
@@ -70,7 +73,7 @@ exports.detailsProduct = async(req,res) => {
     }
 
     if(!product){
-        return res.status(404).json({message:'No product found!'})
+        return next(new ErrorHandler("No product found!",404))
     }
 
     return res.status(201).json({product})
