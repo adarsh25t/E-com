@@ -17,3 +17,10 @@ exports.registerUser = async(req,res,next) => {
 
     return res.status(201).json({user})
 }
+
+// get All users
+exports.getAllUsers = async(req,res,next) => {
+    const users = await User.find();
+
+    return res.status(201).json(users)
+}
