@@ -43,7 +43,7 @@ userSchema.pre("save", async function(next){
     if(!this.isModified("password")){
         next();
     }
-    this.password = bycript.hash(this.password,10)
+    this.password = bycript.hashSync(this.password,10)
 })
 
 // jwt token
@@ -51,6 +51,11 @@ userSchema.methods.getJWTtoken = function(){
     return jwt.sign({ id: this._id },process.env.JWT_SECRET,{
         expiresIn:process.env.JWT_SECRET
     })
+}
+
+// compare password
+userSchema.methods.comparePassword = function(enterpassword){
+   return bycript.compareSync(enterpassword,this.password)
 }
 
 module.exports = mongoose.model("User",userSchema)

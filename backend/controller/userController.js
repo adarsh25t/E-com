@@ -1,5 +1,6 @@
 const ErrorHandler = require('../utils/errorHandler');
 const User = require('../model/userModel');
+const sendToken = require('../utils/jwtToken');
 
 // Register a User
 exports.registerUser = async(req,res,next) => {
@@ -27,7 +28,30 @@ exports.registerUser = async(req,res,next) => {
         token = user.getJWTtoken()
     } catch (error) { return res.status(404).json({error:error.message}) }
 
-    return res.status(201).json({user,token})
+    sendToken(user,201,res)
+}
+
+// Login a User
+exports.loginUser = async(req,res,next) => {
+    const {email,password} = req.body;
+    let user;
+
+    try {
+        user = await User.findOne({email}).select("+password");
+    } catch (error) { console.log(error) }
+
+    if(!user){
+        return res.status(400).json({error:"invalid email"})
+    }
+
+    const isPassword = user.comparePassword(password)
+    console.log(isPassword);
+
+    if(!isPassword){
+        return res.status(400).json({error:"invalid password"})
+    }
+
+    return sendToken(user,200,res)
 }
 
 // get All users
