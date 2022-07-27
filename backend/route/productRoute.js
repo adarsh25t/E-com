@@ -3,10 +3,19 @@ const { getAllProduct, createProduct, updateProduct, deleteProduct, detailsProdu
 const { isAuthendicated } = require('../middleware/auth');
 const router = express.Router();
 
-router.get('/product',isAuthendicated, getAllProduct);
-router.post('/product/create',createProduct);
-router.put('/product/:id',updateProduct);
-router.delete('/product/delete/:id',deleteProduct);
+// Get All Products
+router.get('/product', getAllProduct);
+
+// Create New Product
+router.post('/product/create',isAuthendicated, createProduct);
+
+// Update Product
+router.put('/product/:id',isAuthendicated, updateProduct);
+
+// Delete Product
+router.delete('/product/delete/:id',isAuthendicated, deleteProduct);
+
+// Details of Product
 router.get('/product/:id',detailsProduct)
 
 module.exports = router

@@ -54,6 +54,17 @@ exports.loginUser = async(req,res,next) => {
     return sendToken(user,200,res)
 }
 
+// Logout a User
+exports.logout = async(req,res,next) => {
+
+    res.cookie("token",null,{
+        expires : new Date( Date.now()),
+        httpOnly : true
+    })
+
+    return res.status(200).json({message:"Logout Successfully"})
+}
+
 // get All users
 exports.getAllUsers = async(req,res,next) => {
     const users = await User.find();
