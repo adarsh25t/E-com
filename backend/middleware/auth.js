@@ -17,3 +17,14 @@ exports.isAuthendicated = async(req,res,next) => {
 
     return next()
 }
+
+exports.authorizedRoles = (roles) => {
+    console.log(roles);
+    return (req,res,next) => {
+        // if(roles !== req.user.role){
+        //     return next(new ErrorHandler(`Role: ${req.user.role} is not allowed the section`,403))
+        // }
+        // next()
+    }
+    
+}
