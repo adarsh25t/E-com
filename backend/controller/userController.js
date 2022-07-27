@@ -44,8 +44,8 @@ exports.loginUser = async(req,res,next) => {
         return res.status(400).json({error:"invalid email"})
     }
 
+// check password 
     const isPassword = user.comparePassword(password)
-    console.log(isPassword);
 
     if(!isPassword){
         return res.status(400).json({error:"invalid password"})
