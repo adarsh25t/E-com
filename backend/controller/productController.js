@@ -4,7 +4,9 @@ const ErrorHandler = require('../utils/errorHandler');
 
 // create product
 exports.createProduct = async(req,res) => {
-    console.log(req.body);
+   
+    req.body.user = req.user._id
+
     let product;
     try {
         product = await Product.create(req.body);
