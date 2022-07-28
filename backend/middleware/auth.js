@@ -12,19 +12,17 @@ exports.isAuthendicated = async(req,res,next) => {
     }
 
     const decodedData = jwt.verify(token,process.env.JWT_SECRET);
-
-    req.user = await User.findById(decodedData._id)
-
-    return next()
+    
+    req.user = await User.findById(decodedData.id)
+    
+    next()
 }
 
-exports.authorizedRoles = (roles) => {
-    console.log(roles);
+exports.authorizedRoles = (...roles) => {
     return (req,res,next) => {
-        // if(roles !== req.user.role){
-        //     return next(new ErrorHandler(`Role: ${req.user.role} is not allowed the section`,403))
-        // }
-        // next()
+        if(!roles.includes(req.user.role)){
+            return next( new ErrorHandler(`Role: ${req.user.role} is not allowed to access the resource`,403) )
+        }
+        next()
     }
-    
 }
