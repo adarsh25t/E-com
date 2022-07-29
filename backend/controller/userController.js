@@ -1,6 +1,7 @@
 const ErrorHandler = require('../utils/errorHandler');
 const User = require('../model/userModel');
 const sendToken = require('../utils/jwtToken');
+const sendEmail = require('../utils/sendEmail')
 
 // Register a User
 exports.registerUser = async(req,res,next) => {
@@ -71,3 +72,36 @@ exports.getAllUsers = async(req,res,next) => {
     return res.status(201).json(users)
 }
 
+// forgot password 
+exports.forgotPassword = async(req,res,next) => {
+
+    const user = await User.findOne({email:req.body.email});
+
+    if(!user){
+        next( new ErrorHandler("email not exist",404))
+    }
+
+    // get reset password token
+    const resetToken = user.getResetPasswordToken();
+
+    await user.save({ validateBeforeSave: false });
+
+    const resetPasswordUrl = `${req.protocol}://${req.get("host")}/api/password/reset/${resetToken}`;
+    const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\n if you have not reguested then, ignore it`;
+
+    try {
+        
+        await sendEmail({
+            email:req.email,
+            subject:"E-com password change",
+            message
+        })
+
+
+    } catch (error) {
+        user.resetPasswordToken = undefined
+        user.resetPasswordExpire = undefined
+        await user.save({ validateBeforeSave: false });
+        return next( new ErrorHandler(error.message,500));
+    }
+}
